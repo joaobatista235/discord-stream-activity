@@ -273,7 +273,7 @@ export function Transmitter({ token, livekitUrl, roomId, streamerName }: Props) 
               id="stop-stream-btn"
               className="tx-btn danger"
               onClick={() => void handleStop()}
-              disabled={status === 'connecting' || status === 'stopping'}
+              disabled={status === 'connecting'}
             >
               ⏹ Encerrar transmissão
             </button>
