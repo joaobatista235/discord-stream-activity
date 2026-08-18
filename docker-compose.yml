@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  # ── LiveKit SFU ────────────────────────────────────────────────────────────
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: discord-stream-livekit
+    command: --config /etc/livekit.yaml
+    ports:
+      - '7880:7880'         # HTTP / WebSocket
+      - '7881:7881/tcp'     # RTC TCP
+      - '50000-50020:50000-50020/udp'  # RTC UDP (limited range for dev)
+    volumes:
+      - ./infra/livekit.yaml:/etc/livekit.yaml:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:7880/']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── API Backend ────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: discord-stream-api
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
+      DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
+      LIVEKIT_URL: ws://livekit:7880
+      LIVEKIT_PUBLIC_URL: ${LIVEKIT_PUBLIC_URL:-ws://127.0.0.1:7880}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-devkey}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-devsecret_change_in_production}
+      LIVEKIT_TOKEN_TTL: ${LIVEKIT_TOKEN_TTL:-3600}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+    depends_on:
+      livekit:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5

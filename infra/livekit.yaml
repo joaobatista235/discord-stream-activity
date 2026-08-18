@@ -1,0 +1,29 @@
+# LiveKit self-hosted configuration for local development
+# Reference: https://docs.livekit.io/home/self-hosting/local/
+
+port: 7880
+
+# RTC / WebRTC settings
+rtc:
+  # UDP port range for media
+  port_range_start: 50000
+  port_range_end: 60000
+  # Set to your machine's IP if testing across devices on LAN
+  # tcp_port: 7881
+  # use_external_ip: true
+
+# Logging
+logging:
+  level: info
+  json: false
+
+# API keys — override with strong secrets in production
+keys:
+  devkey: devsecret_change_in_production
+
+# Room defaults
+room:
+  # Max 10 viewers for MVP
+  max_participants: 11  # 1 streamer + 10 viewers
+  empty_timeout: 300    # 5 min — delete empty rooms
+  departure_timeout: 20 # seconds before removing disconnected participant
