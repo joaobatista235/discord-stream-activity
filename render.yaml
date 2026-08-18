@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: discord-stream-api
+    env: docker
+    rootDir: .
+    dockerfilePath: apps/api/Dockerfile
+    envVars:
+      - key: PORT
+        value: 3000
