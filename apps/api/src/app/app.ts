@@ -45,10 +45,10 @@ export async function buildApp() {
 
   // ─── Routes ────────────────────────────────────────────────────────────────
 
-  await app.register(authRoutes, { prefix: '/api/auth' });
-  await app.register(sessionRoutes, { prefix: '/api/session' });
-  await app.register(roomRoutes, { prefix: '/api/room' });
-  await app.register(streamRoutes, { prefix: '/api/stream' });
+  await app.register(authRoutes, { prefix: '/auth' });
+  await app.register(sessionRoutes, { prefix: '/session' });
+  await app.register(roomRoutes, { prefix: '/room' });
+  await app.register(streamRoutes, { prefix: '/stream' });
 
   // Health check
   app.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }));
